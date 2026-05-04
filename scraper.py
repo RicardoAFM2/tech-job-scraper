@@ -3,7 +3,8 @@ import os
 from bs4 import BeautifulSoup
 import psycopg2
 import time
-from dotenv import load_dotenv 
+from dotenv import load_dotenv
+import schedule
 
 load_dotenv()
 
@@ -14,7 +15,7 @@ DB_CONFIG = {
     "host": os.getenv("DB_HOST"),
     "dbname": os.getenv("DB_NAME"),
     "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASS"),
+    "password": os.getenv("DB_PASSWORD"),
     "port": os.getenv("DB_PORT"),
 }
 
@@ -191,10 +192,11 @@ if __name__ == "__main__":
     iniciar_db()
     enviar_mensagem_telegram("O Bot começou a procurar vagas")
     
+    schedule.every().day.at("9:30").do(procurar_vagas)
     
     while True:
         try:
-            procurar_vagas()
+            schedule.run_pending()
             time.sleep(43200)
         except Exception as e:
             print(f"Acorreu um erro fatal: {e}")
