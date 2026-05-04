@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
 DB_CONFIG = {
     "host": os.getenv("DB_HOST"),
     "dbname": os.getenv("DB_NAME"),
@@ -54,7 +57,7 @@ def procurar_vagas():
         "3 anos", "4 anos", "5 anos", "10 anos",
         "3+ years", "4+ years", "5+ years", "10+ years",
         "years of experience", "proven experience",
-        "solid experience", "experiência sólida", "vasta experiência", 
+        "solid experience", "experiência sólida", "vasta experiência", "pro", 
         "deep knowledge", "conhecimento profundo", "expert level",
         "senior level", "nível sénior",
         "mentoring", "mentorar", "leading teams", "liderar equipas",
@@ -66,7 +69,7 @@ def procurar_vagas():
     novas_vagas = 0
     pagina_atual = 1
 
-    while True:
+    while pagina_atual <= 2:
         print(f"\n A ler página {pagina_atual}...")
 
         url = f'https://www.itjobs.pt/emprego?page={pagina_atual}'
@@ -142,6 +145,9 @@ def procurar_vagas():
                     if cur.rowcount > 0:
                         print(f"Vaga Aprovada: {titulo} | {empresa}")
                         novas_vagas += 1
+
+                        texto_alerta = f"Nova Vaga:\n\n {titulo}\n Emrpeda: {empresa}\n {link}"
+                        enviar_mensagem_telegram(texto_alerta)
                     else:
                         print(f"Já existia na BD: {titulo} | {empresa}")
                     time.sleep(1)
@@ -163,8 +169,26 @@ def procurar_vagas():
     cur.close()
     conn.close()
 
-    print(f"\nConcluído! Lemos {pagina_atual - 1} páginas e guardámos {novas_vagas} novas vagas na Base de Dados.")
+    print(f"\nConcluído! Lemos {pagina_atual - 1} páginas e guardámos {novas_vagas} novas vagas na Base de Dados e enviamos para o telegram.")
+
+def enviar_mensagem_telegram(mesagem):
+    if not TOKEN or not CHAT_ID:
+        print("Falta o token ou o od do telegram")
+        return
+
+    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    dados = {
+        "chat_id": CHAT_ID,
+        "text": mesagem
+    }
+
+    try:
+        requests.post(url, data=dados)
+    except Exception as e:
+        print(f"Erro ao contactar o Telegram: {e}")
 
 if __name__ == "__main__":
     iniciar_db()
+    enviar_mensagem_telegram("O Bot começou a procurar vagas")
     procurar_vagas()
+    
