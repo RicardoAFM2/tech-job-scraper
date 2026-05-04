@@ -192,7 +192,7 @@ if __name__ == "__main__":
     iniciar_db()
     enviar_mensagem_telegram("O Bot começou a procurar vagas")
     
-    schedule.every().day.at("9:30").do(procurar_vagas)
+    schedule.every().day.at("09:30").do(procurar_vagas)
     
     while True:
         try:
