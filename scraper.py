@@ -69,7 +69,7 @@ def procurar_vagas():
     novas_vagas = 0
     pagina_atual = 1
 
-    while pagina_atual <= 2:
+    while True:
         print(f"\n A ler página {pagina_atual}...")
 
         url = f'https://www.itjobs.pt/emprego?page={pagina_atual}'
@@ -190,5 +190,14 @@ def enviar_mensagem_telegram(mesagem):
 if __name__ == "__main__":
     iniciar_db()
     enviar_mensagem_telegram("O Bot começou a procurar vagas")
-    procurar_vagas()
+    
+    
+    while True:
+        try:
+            procurar_vagas()
+            time.sleep(43200)
+        except Exception as e:
+            print(f"Acorreu um erro fatal: {e}")
+            enviar_mensagem_telegram("O Boi foi abaixo com um erro")
+            time.sleep(60)
     
