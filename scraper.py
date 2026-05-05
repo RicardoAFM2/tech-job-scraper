@@ -60,19 +60,36 @@ def procurar_vagas():
         "expert", "specialist", "especialista", "principal", "staff", "distinguished",
         "lead", "leader", "lider", "leadership", "manager", "gestor", "management", 
         "head", "director", "diretor", "vp", "chief", "owner", "scrum master",
-        "architect", "arquiteto"
+        "architect", "arquiteto", "supervisor", "coordenador", "coordinator"
     ]
     
     palavras_proibidas_descricao = [
-        "3 anos", "4 anos", "5 anos", "10 anos",
+        "3 years", "4 years", "5 years", "10 years",
         "3+ years", "4+ years", "5+ years", "10+ years",
-        "years of experience", "proven experience",
-        "solid experience", "experiência sólida", "vasta experiência", "pro", 
-        "deep knowledge", "conhecimento profundo", "expert level",
-        "senior level", "nível sénior",
-        "mentoring", "mentorar", "leading teams", "liderar equipas",
-        "strategic direction", "decisões estratégicas"
+        "years of experience", "years of professional experience",
+        "minimum of 3", "minimum of 4", "minimum of 5",
+
+        "3 anos", "4 anos", "5 anos", "10 anos",
+        "mínimo de 3", "mínimo de 4", "mínimo de 5",
+        "minimo de 3", "minimo de 4", "minimo de 5",
+        "anos de experiência", "anos de experiencia", "experiência profissional",
+
+        "mid-level", "mid level", "senior level", "nível sénior", "nivel senior", 
+
+        "proven experience", "solid experience", "deep knowledge", "expert level",
+        "strong professional experience", "extensive experience", "autonomous",
+
+        "experiência sólida", "experiencia solida", "vasta experiência", "vasta experiencia",
+        "conhecimento profundo", "experiência comprovada", "experiencia comprovada",
+        "pro", "autonomia",
+
+        "mentoring", "mentorship", "leading teams", "strategic direction",
+        "guide junior", "mentor junior",
+ 
+        "mentorar", "mentoria", "liderar equipas", "decisões estratégicas",
+        "orientar", "liderança"
     ]
+
 
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
