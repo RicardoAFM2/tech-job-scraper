@@ -51,6 +51,8 @@ def iniciar_db():
 def procurar_vagas():
     print("\nA procurar novas vagas no ITjobs...")
 
+    enviar_mensagem_telegram("O Bot começou a procurar vagas")
+
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
@@ -218,8 +220,8 @@ if __name__ == "__main__":
     iniciar_db()
 
     threading.Thread(target=manter_vivo_render, daemon=True).start()
-    enviar_mensagem_telegram("O Bot começou a procurar vagas")
     
+
     schedule.every().day.at("09:30").do(procurar_vagas)
     
     while True:
