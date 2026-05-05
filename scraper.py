@@ -5,6 +5,9 @@ import psycopg2
 import time
 from dotenv import load_dotenv
 import schedule
+import threading
+import http.server
+import socketserver
 
 load_dotenv()
 
@@ -18,6 +21,12 @@ DB_CONFIG = {
     "password": os.getenv("DB_PASSWORD"),
     "port": os.getenv("DB_PORT"),
 }
+
+def manter_vivo_render():
+    porta = int(os.environ.get("PORT", 10000))
+    handler = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("0.0.0.0", porta), handler) as httpd:
+        httpd.serve_forever()
 
 def iniciar_db():
     print("A preparar a Base de Dados...")
@@ -190,6 +199,8 @@ def enviar_mensagem_telegram(mesagem):
 
 if __name__ == "__main__":
     iniciar_db()
+
+    threading.Thread(target=manter_vivo_render, daemon=True).start()
     enviar_mensagem_telegram("O Bot começou a procurar vagas")
     
     schedule.every().day.at("09:30").do(procurar_vagas)
@@ -197,7 +208,7 @@ if __name__ == "__main__":
     while True:
         try:
             schedule.run_pending()
-            time.sleep(43200)
+            time.sleep(60)
         except Exception as e:
             print(f"Acorreu um erro fatal: {e}")
             enviar_mensagem_telegram("O Boi foi abaixo com um erro")
