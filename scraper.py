@@ -76,7 +76,7 @@ def procurar_vagas():
 
         "experiência sólida", "experiencia solida", "vasta experiência", "vasta experiencia",
         "conhecimento profundo", "experiência comprovada", "experiencia comprovada",
-        "pro", "autonomia",
+        
 
         "mentoring", "mentorship", "leading teams", "strategic direction",
         "guide junior", "mentor junior",
