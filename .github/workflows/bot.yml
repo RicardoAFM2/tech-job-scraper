@@ -2,7 +2,7 @@ name: Bot de Vagas Diário
 
 on:
   schedule:
-    - cron: '30 9 * * *'
+    - cron: '30 8 * * *'
   workflow_dispatch:
 
 jobs:
