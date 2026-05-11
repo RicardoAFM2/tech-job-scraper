@@ -193,6 +193,7 @@ def procurar_vagas():
 
     print(f"\nConcluído! Lemos {pagina_atual - 1} páginas e guardámos {novas_vagas} novas vagas na Base de Dados e enviamos para o telegram.")
 
+
 def enviar_mensagem_telegram(mesagem):
     if not TOKEN or not CHAT_ID:
         print("Falta o token ou o od do telegram")
@@ -209,8 +210,57 @@ def enviar_mensagem_telegram(mesagem):
     except Exception as e:
         print(f"Erro ao contactar o Telegram: {e}")
 
+
+def fazer_limpeza():
+
+
+    limpar = "A ligar à base de dados para ver as vagas guardadas..."
+    enviar_mensagem_telegram(limpar)
+    conn = psycopg2.connect(**DB_CONFIG)
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, tituli, link FROM vagas;")
+    vagas = cur.fetchall()
+
+    if not vagas:
+        print("A base de dados está vazia.")
+        return
+    
+    print(f"Encontrei {len(vagas)} vagas na base de dados. A iniciar a verificação de inativas...\n")
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+
+    vagas_removidas = 0
+
+    for vaga in vagas:
+        id_vaga = vaga[0]
+        titulo = vaga[1]
+        link = vaga[2]
+
+        try:
+            reposta = requests.get(link, headers=headers)
+            site_html = BeautifulSoup(reposta.text, 'html.parser')
+            texto_da_pagina = site_html.text.lower()
+
+            if "anúncio inactivo" in texto_da_pagina:
+                cur.execute("DELETE FROM vagas WHERE id = %s", (id_vaga,))
+                vagas_removidas += 1
+        except Exception as e:
+            print(f"Erro ao remover a vaga'{titulo}': {e}")
+        
+    
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    vagas_limpas = f"Limpeza concluída! Foram apagadas {vagas_removidas} vagas que já não estavam ativas."
+    enviar_mensagem_telegram(vagas_limpas)
+
 if __name__ == "__main__":
     iniciar_db()
     procurar_vagas()
+    fazer_limpeza()
     
    
