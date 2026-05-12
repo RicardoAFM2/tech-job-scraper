@@ -219,7 +219,7 @@ def fazer_limpeza():
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
 
-    cur.execute("SELECT id, tituli, link FROM vagas;")
+    cur.execute("SELECT id, titulo, link FROM vagas;")
     vagas = cur.fetchall()
 
     if not vagas:
